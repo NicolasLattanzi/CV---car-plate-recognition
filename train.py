@@ -4,32 +4,53 @@ from torch.utils.data import DataLoader
 import network
 import data
 
-###### Model variables ########
+###### hyper parameters ########
 
 batch_size = 32
-num_classes = 8
-num_epochs = 16
+num_epochs = 4
+learning_rate = 0.001
 
 ###############################
 
-dataset = data.CarPlateDataset("../CCPD2019")
+dataset = data.create_dataset("../CCPD2019")
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-image, label = dataset[5]
-print(label)
 
-model = network.create_model(num_classes)
-# checking if gpu is available
+model = network.create_model()
+# checking if gpu is available, otherwise cpu is used
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 
 print('//  starting training  //')
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.005, momentum=0.9, weight_decay=0.0005)
-lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1)
+loss_function = torch.nn.MSELoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
-    pass
+    for i, (images, labels) in enumerate(dataloader):
+        images = images.to(device)
+        labels = labels.to(device)
+
+        # forward step
+        outputs = model(images)
+        print("outputs shape:", outputs.shape)
+        print("labels shape:", labels.shape)
+        print(labels)
+        loss = loss_function(outputs, labels)
+
+        # backward step
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        train_loss += loss.item()
+
+        # printing error every X batch
+        if (i + 1) % 10 == 0:
+            print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(dataloader)}], Loss: {loss.item():.4f}")
+
+    avg_loss = train_loss / len(dataloader)
+    print(f"Epoch [{epoch+1}/{num_epochs}] completed. Average Loss: {avg_loss:.4f}")
 
 

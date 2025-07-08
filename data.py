@@ -1,18 +1,14 @@
-from torch.utils.data import Dataset
-from torchvision.datasets import ImageFolder
+from torchvision.datasets import ImageFolder    
+from torchvision import transforms
 
-class CarPlateDataset(Dataset):
 
-    def __init__(self, data_dir, transform = None):
-        self.data = ImageFolder(data_dir, transform=transform)
-    
-    def __len__(self):
-        return len(self.data)
+def create_dataset(path):
 
-    def __getitem__(self, index):
-        return self.data[index]
-    
-    @property
-    def classes(self):
-        return self.data.classes
-    
+    transform = transforms.Compose([
+        #transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225])
+    ])
+
+    return ImageFolder(root=path, transform=transform)
