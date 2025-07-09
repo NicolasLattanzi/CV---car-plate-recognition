@@ -18,6 +18,7 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 model = network.create_model()
 # checking if gpu is available, otherwise cpu is used
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+model = model.to(device)
 
 
 print('//  starting training  //')
@@ -25,12 +26,16 @@ print('//  starting training  //')
 loss_function = torch.nn.MSELoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
+
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0.0
+    print(epoch)
     for i, (images, labels) in enumerate(dataloader):
         images = images.to(device)
         labels = labels.to(device)
+        #labels = labels.float().to(device)
+        #print(images.shape)
 
         # forward step
         outputs = model(images)
@@ -53,4 +58,5 @@ for epoch in range(num_epochs):
     avg_loss = train_loss / len(dataloader)
     print(f"Epoch [{epoch+1}/{num_epochs}] completed. Average Loss: {avg_loss:.4f}")
 
+model.train(False)
 
