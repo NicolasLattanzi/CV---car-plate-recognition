@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 
 import network
 import data
+import utils
 
 ###### hyper parameters ########
 
@@ -32,17 +33,20 @@ for epoch in range(num_epochs):
     train_loss = 0.0
     print(epoch)
     for i, (images, labels) in enumerate(dataloader):
+        plate_positions = []
+        for x in labels:
+            plate_positions.append( utils.vertices_from_image_path(x) )
+
         images = images.to(device)
-        labels = labels.to(device)
+        #labels = labels.to(device)
         #labels = labels.float().to(device)
-        #print(images.shape)
 
         # forward step
         outputs = model(images)
-        print("outputs shape:", outputs.shape)
-        print("labels shape:", labels.shape)
-        print(labels)
-        loss = loss_function(outputs, labels)
+        labels_tensor = torch.tensor(plate_positions, dtype=torch.float32) # MSE accepts only float32
+        #print("outputs shape:", outputs.shape)
+        #print("labels shape:", labels_tensor.shape)
+        loss = loss_function(outputs, labels_tensor)
 
         # backward step
         optimizer.zero_grad()
@@ -52,7 +56,7 @@ for epoch in range(num_epochs):
         train_loss += loss.item()
 
         # printing error every X batch
-        if (i + 1) % 10 == 0:
+        if (i + 1) % 100 == 0:
             print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(dataloader)}], Loss: {loss.item():.4f}")
 
     avg_loss = train_loss / len(dataloader)

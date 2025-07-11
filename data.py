@@ -1,6 +1,21 @@
 from torchvision.datasets import ImageFolder    
 from torchvision import transforms
 
+import utils
+
+
+class MyImageFolder(ImageFolder):
+
+    def __getitem__(self, index: int) -> tuple[any, any]:
+        path, target = self.samples[index]
+        sample = self.loader(path)
+        if self.transform is not None:
+            sample = self.transform(sample)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return sample, path
+    
 
 def create_dataset(path):
 
@@ -11,4 +26,4 @@ def create_dataset(path):
                             std=[0.229, 0.224, 0.225])
     ])
 
-    return ImageFolder(root=path, transform=transform)
+    return MyImageFolder(root=path, transform=transform)
