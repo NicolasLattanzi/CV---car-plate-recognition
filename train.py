@@ -29,9 +29,9 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 
 for epoch in range(num_epochs):
-    model.train()
+    model.train(True)
     train_loss = 0.0
-    print(epoch)
+    print(f'###\t\t  starting epoch n.{epoch}  \t\t###\n')
     for i, (images, labels) in enumerate(dataloader):
         plate_positions = []
         for x in labels:
