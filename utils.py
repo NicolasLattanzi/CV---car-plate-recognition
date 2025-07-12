@@ -8,7 +8,7 @@ def vertices_from_image_path(path: str):
     raw_vertices = path.split('-')
 
     if len(raw_vertices) <= 4: return [0,0,0,0,0,0,0,0] # error prevention
-    else: raw_vertices = raw_vertices[3] # always in 4th position
+    else: raw_vertices = raw_vertices[3]
 
     raw_vertices = raw_vertices.split('_')
     vertices = []

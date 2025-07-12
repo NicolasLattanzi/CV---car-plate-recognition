@@ -3,7 +3,6 @@ from torch.utils.data import DataLoader
 
 import network
 import data
-import utils
 
 ###### hyper parameters ########
 
@@ -13,8 +12,13 @@ learning_rate = 0.001
 
 ###############################
 
-dataset = data.create_dataset("../CCPD2019")
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+dataset = data.CarPlateDataset("../CCPD2019")
+train_dataset, test_dataset = data.train_test_split(dataset)
+trainloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+testLoader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+train_size = len(trainloader)
+test_size = len(test_dataset)
 
 model = network.create_model()
 # checking if gpu is available, otherwise cpu is used
@@ -29,24 +33,16 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 
 for epoch in range(num_epochs):
-    model.train(True)
+    model.train()
     train_loss = 0.0
-    print(f'###\t\t  starting epoch n.{epoch}  \t\t###\n')
-    for i, (images, labels) in enumerate(dataloader):
-        plate_positions = []
-        for x in labels:
-            plate_positions.append( utils.vertices_from_image_path(x) )
-
+    print(f'###\t\t  starting epoch n.{epoch+1}  \t\t###\n')
+    for i, (images, labels) in enumerate(trainloader):
         images = images.to(device)
-        #labels = labels.to(device)
-        #labels = labels.float().to(device)
+        labels = labels.to(device)
 
         # forward step
         outputs = model(images)
-        labels_tensor = torch.tensor(plate_positions, dtype=torch.float32) # MSE accepts only float32
-        #print("outputs shape:", outputs.shape)
-        #print("labels shape:", labels_tensor.shape)
-        loss = loss_function(outputs, labels_tensor)
+        loss = loss_function(outputs, labels)
 
         # backward step
         optimizer.zero_grad()
@@ -56,11 +52,26 @@ for epoch in range(num_epochs):
         train_loss += loss.item()
 
         # printing error every X batch
-        if (i + 1) % 100 == 0:
-            print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(dataloader)}], Loss: {loss.item():.4f}")
+        if (i + 1) % 1 == 0:
+            print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{train_size}], Loss: {loss.item():.4f}")
 
-    avg_loss = train_loss / len(dataloader)
-    print(f"Epoch [{epoch+1}/{num_epochs}] completed. Average Loss: {avg_loss:.4f}")
+    avg_train_loss = train_loss / train_size
+    print(f"Epoch [{epoch+1}/{num_epochs}] training completed. Average Loss: {avg_train_loss:.4f}")
 
-model.train(False)
+
+    model.eval()
+    test_loss = 0.0
+    with torch.no_grad():
+        for (images, labels) in testLoader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            loss = loss_function(outputs, labels)
+            test_loss += loss.item()
+
+    avg_test_loss = test_loss / test_size
+    print(f"Epoch [{epoch+1}/{num_epochs}] test completed. Average Loss: {avg_test_loss:.4f}\n")
+
+
 
