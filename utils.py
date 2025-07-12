@@ -1,5 +1,7 @@
 # extraction of car plate vertices from image path/ name
 # example of a string of vertices: -386&473_177&454_154&383_363&402-
+import numpy as np
+import cv2
 def vertices_from_image_path(path: str):
     raw_vertices = path.split('-')
 
@@ -10,3 +12,13 @@ def vertices_from_image_path(path: str):
     vertices = []
     for x in raw_vertices: vertices += x.split('&')
     return list(map(int, vertices))
+
+
+#implementare funzione per matrice di trasformazione 
+
+def LP_photo(image, pts):
+    dst_pts=np.attay([ [0,0],[93,0],[93,23],[0,23] ], dtype="float32")
+
+    Matrix = cv2.getPerspectiveTransform(np.array(pts, dtype="float32"), dst_pts)
+    warped = cv2.warpPerspective(image, Matrix, (94, 24))
+    return warped
