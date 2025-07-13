@@ -20,7 +20,7 @@ def vertices_from_image_path(path: str):
 
 def LP_photo(image, pts):
     # image resizing to 94x24
-    dst_pts=np.array([ [0,0],[93,0],[93,23],[0,23] ], dtype="float32")
+    dst_pts=np.array([ [93,23],[0,23],[0,0],[93,0] ], dtype="float32")
 
     Matrix = cv2.getPerspectiveTransform(np.array(pts, dtype="float32"), dst_pts)
     warped = cv2.warpPerspective(image, Matrix, (94, 24))
