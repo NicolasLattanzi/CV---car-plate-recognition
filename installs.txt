@@ -3,3 +3,4 @@ preparing the virtual enviroment:
 conda install -c pytorch pytorch torchvision
 pip install imutils
 pip install opencv-python==3.4.18.65
+conda install conda-forge::matplotlib

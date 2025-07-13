@@ -7,7 +7,7 @@ import data
 ###### hyper parameters ########
 
 batch_size = 32
-num_epochs = 4
+num_epochs = 1
 learning_rate = 0.001
 
 ###############################
@@ -52,7 +52,7 @@ for epoch in range(num_epochs):
         train_loss += loss.item()
 
         # printing error every X batch
-        if (i + 1) % 1 == 0:
+        if (i + 1) % 50 == 0:
             print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{train_size}], Loss: {loss.item():.4f}")
 
     avg_train_loss = train_loss / train_size
@@ -61,9 +61,8 @@ for epoch in range(num_epochs):
 
     modelDet.eval()
     test_loss = 0.0
-    torch.save(modelDet, "models/modelDetection.pth")
     with torch.no_grad():
-        for (images, labels) in testLoader:
+        for i, (images, labels) in enumerate(testLoader):
             images = images.to(device)
             labels = labels.to(device)
 
@@ -71,8 +70,13 @@ for epoch in range(num_epochs):
             loss = loss_function(outputs, labels)
             test_loss += loss.item()
 
+            if (i + 1) % 50 == 0:
+                print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{train_size}], Loss: {loss.item():.4f}")
+
     avg_test_loss = test_loss / test_size
     print(f"Epoch [{epoch+1}/{num_epochs}] test completed. Average Loss: {avg_test_loss:.4f}\n")
+
+torch.save(modelDet, "models/modelDetection.pth")
 
 
 
