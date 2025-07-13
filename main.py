@@ -4,6 +4,7 @@ from network import LPRNet
 from network import create_model_Detection
 from train import test_dataset
 import utils
+import matplotlib.pyplot as plt
 
 #carico modello detection 
 modelDet = torch.load("modelDetection.pth", map_location="cpu")
@@ -34,6 +35,10 @@ modelReco.load_state_dict(state_dict)
 #passo il tensore ottenuto al modello
 output2=modelReco(input2) #stringa con i caratteri della targa
 print(output2)
+plt.imshow(utils.BgrToRgb(image))  # stampo l'immaigne originale convertita in rgb per confronto.
+plt.title("Immagine originale CCPD")
+plt.axis('off')
+plt.show()
 
 
 
