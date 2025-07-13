@@ -1,15 +1,15 @@
+# extraction of car plate vertices from image path/ name
+# example of a string of vertices: -386&473_177&454_154&383_363&402-
 import numpy as np
 import cv2
 from torchvision import transforms
 
 
 def vertices_from_image_path(path: str):
-    # extraction of car plate vertices from image path/ name
-    # example of a string of vertices: -386&473_177&454_154&383_363&402-
     raw_vertices = path.split('-')
 
     if len(raw_vertices) <= 4: return [0,0,0,0,0,0,0,0] # error prevention
-    else: raw_vertices = raw_vertices[3]
+    else: raw_vertices = raw_vertices[3] # always in 4th position
 
     raw_vertices = raw_vertices.split('_')
     vertices = []
@@ -24,7 +24,11 @@ def LP_photo(image, pts):
 
     Matrix = cv2.getPerspectiveTransform(np.array(pts, dtype="float32"), dst_pts)
     warped = cv2.warpPerspective(image, Matrix, (94, 24))
-    rgbConv=cv2.cvtColot(warped, cv2.COLORBGR2RGB)#converto l'immagine da bgr a rgb
+    rgbConv=BgrToRgb(warped)#converto l'immagine da bgr a rgb
     transform=transforms.Compose([transforms.ToTensor()])  #convertitore in tensore
     tensorTrans=transform(rgbConv).unsqueeze(0)     #converto l'immagine in un tensore per darlo a LPRNet
     return tensorTrans
+
+def BgrToRgb(image):
+    rgbConv=cv2.cvtColor(image, cv2.COLORBGR2RGB)
+    return rgbConv
