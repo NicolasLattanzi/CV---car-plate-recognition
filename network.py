@@ -4,7 +4,7 @@ from torchvision.models import resnext50_32x4d, ResNeXt50_32X4D_Weights
 import torch
 
 
-def create_model_Detection():
+def build_resnet():
     model = models.resnext50_32x4d(weights = ResNeXt50_32X4D_Weights.DEFAULT)
     OUTPUTS = 8
     model.fc = nn.Linear(model.fc.in_features, OUTPUTS)

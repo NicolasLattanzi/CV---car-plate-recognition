@@ -1,4 +1,3 @@
-from torchvision.datasets import ImageFolder    
 from torchvision import transforms
 from torch.utils.data import *
 from imutils import paths
@@ -23,12 +22,15 @@ class CarPlateDataset(Dataset):
         else: # evaluation
             folders = [ 'ccpd_blur', 'ccpd_challenge', 'ccpd_db', 'ccpd_fn', 'ccpd_np', 'ccpd_rotate', 'ccpd_tilt', 'ccpd_weather' ]
             self.images = []
+            for folder_name in folders:
+                folder_path = os.path.join(self.root, folder_name)
+                for img in os.listdir(folder_path):
+                    if img.endswith('.jpg'): self.images.append( os.path.join(folder_path, img) )
         
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                std=[0.229, 0.224, 0.225])
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
     def __len__(self):

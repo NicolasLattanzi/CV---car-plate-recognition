@@ -20,7 +20,7 @@ testLoader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 train_size = len(trainloader)
 test_size = len(test_dataset)
 
-modelDet = network.create_model_Detection()
+modelDet = network.build_resnet()
 # checking if gpu is available, otherwise cpu is used
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 modelDet = modelDet.to(device)
@@ -61,7 +61,7 @@ for epoch in range(num_epochs):
 
     modelDet.eval()
     test_loss = 0.0
-    torch.save(modelDet, "modelDetection.pth")
+    torch.save(modelDet, "models/modelDetection.pth")
     with torch.no_grad():
         for (images, labels) in testLoader:
             images = images.to(device)

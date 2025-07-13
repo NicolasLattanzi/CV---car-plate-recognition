@@ -1,13 +1,21 @@
 import torch
+from torch.utils.data import DataLoader
 import random
-from network import LPRNet
-from network import create_model_Detection
-from train import test_dataset
-import utils
 import matplotlib.pyplot as plt
 
+import network
+import data
+import utils
+
+
+# data
+dataset = data.CarPlateDataset("../CCPD2019")
+train_dataset, test_dataset = data.train_test_split(dataset)
+trainloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+testLoader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+
 #carico modello detection 
-modelDet = torch.load("modelDetection.pth", map_location="cpu")
+modelDet = torch.load("models/modelDetection.pth", map_location="cpu")
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 modelDet = modelDet.to(device)
 
@@ -26,9 +34,9 @@ input2=utils.LP_photo(image, output1) #immagine 94x24 ottenuta dall'immagine ori
 num_classes=68 #numero di caratteri supportati
 dropout_rate=0.5
 
-modelReco=LPRNet(class_num=num_classes, dropout_rate=dropout_rate)
+modelReco = network.build_lprnet(class_num=num_classes, dropout_rate=dropout_rate)
 
-state_dict=torch.load("Final_LPRNet_model.pth", map_location="cpu")
+state_dict=torch.load("models/Final_LPRNet_model.pth", map_location="cpu")
 modelReco.load_state_dict(state_dict)
 
 
