@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from torchvision import transforms
 
 
 def vertices_from_image_path(path: str):
@@ -19,9 +20,11 @@ def vertices_from_image_path(path: str):
 #implementare funzione per matrice di trasformazione 
 
 def LP_photo(image, pts):
-    # image resizing to 94x24
     dst_pts=np.array([ [93,23],[0,23],[0,0],[93,0] ], dtype="float32")
 
     Matrix = cv2.getPerspectiveTransform(np.array(pts, dtype="float32"), dst_pts)
     warped = cv2.warpPerspective(image, Matrix, (94, 24))
-    return warped
+    rgbConv=cv2.cvtColot(warped, cv2.COLORBGR2RGB)#converto l'immagine da bgr a rgb
+    transform=transforms.Compose([transforms.ToTensor()])  #convertitore in tensore
+    tensorTrans=transform(rgbConv).unsqueeze(0)     #converto l'immagine in un tensore per darlo a LPRNet
+    return tensorTrans
