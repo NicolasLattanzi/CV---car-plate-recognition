@@ -14,11 +14,11 @@ learning_rate = 0.001
 
 dataset = data.CarPlateDataset("../CCPD2019")
 train_dataset, test_dataset = data.train_test_split(dataset)
-trainloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-testLoader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-train_size = len(trainloader)
-test_size = len(test_dataset)
+train_size = len(train_loader)/8
+test_size = len(test_loader)/8
 
 modelDet = network.build_resnet()
 # checking if gpu is available, otherwise cpu is used
@@ -29,14 +29,14 @@ modelDet = modelDet.to(device)
 print('//  starting training  //')
 
 loss_function = torch.nn.MSELoss()
-optimizer = torch.optim.SGD(modelDet.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(modelDet.parameters(), lr=learning_rate)
 
 
 for epoch in range(num_epochs):
     modelDet.train()
     train_loss = 0.0
     print(f'###\t\t  starting epoch n.{epoch+1}  \t\t###\n')
-    for i, (images, labels) in enumerate(trainloader):
+    for i, (images, labels, _) in enumerate(train_loader):
         images = images.to(device)
         labels = labels.to(device)
 
@@ -54,6 +54,7 @@ for epoch in range(num_epochs):
         # printing error every X batch
         if (i + 1) % 50 == 0:
             print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{train_size}], Loss: {loss.item():.4f}")
+        if i >= train_size: break
 
     avg_train_loss = train_loss / train_size
     print(f"Epoch [{epoch+1}/{num_epochs}] training completed. Average Loss: {avg_train_loss:.4f}")
@@ -62,7 +63,7 @@ for epoch in range(num_epochs):
     modelDet.eval()
     test_loss = 0.0
     with torch.no_grad():
-        for i, (images, labels) in enumerate(testLoader):
+        for i, (images, labels, _) in enumerate(test_loader):
             images = images.to(device)
             labels = labels.to(device)
 
@@ -72,11 +73,12 @@ for epoch in range(num_epochs):
 
             if (i + 1) % 50 == 0:
                 print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{train_size}], Loss: {loss.item():.4f}")
+            if i >= test_size: break
 
     avg_test_loss = test_loss / test_size
     print(f"Epoch [{epoch+1}/{num_epochs}] test completed. Average Loss: {avg_test_loss:.4f}\n")
 
-torch.save(modelDet, "models/modelDetection.pth")
+torch.save(modelDet, "models/detection_model.pth")
 
 
 

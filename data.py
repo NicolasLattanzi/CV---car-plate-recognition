@@ -45,11 +45,13 @@ class CarPlateDataset(Dataset):
         v1,v2,v3,v4,v5,v6,v7,v8 = utils.vertices_from_image_path(img_path)
         w, h = image.size
         vertices = torch.tensor( [ v1/w, v2/h, v3/w, v4/h, v5/w, v6/h, v7/w, v8/h ], dtype=torch.float32 ) # normalization
+        license_plate = utils.plate_from_image_path(img_path)
+        license_plate = torch.tensor( license_plate, dtype=torch.int32 )
 
         if self.transform:
             image = self.transform(image)
 
-        return image, vertices
+        return image, vertices, license_plate
 
 def train_test_split(dataset, train=0.5, test=0.5):
     return torch.utils.data.random_split(dataset, [train, test])
