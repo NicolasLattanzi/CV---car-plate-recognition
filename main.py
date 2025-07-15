@@ -1,10 +1,10 @@
 import torch
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-
 import network
 import data
 import utils
+import cv2
 
 
 # data
@@ -61,7 +61,10 @@ plt.show()
 
 resized_img = resized_img.float().unsqueeze(0)
 
-out = LPRnet( resized_img ) # license plate string
+output2 = LPRnet( resized_img ) # license plate string
+output3=utils.tensorToString(output2)
+
+
 
 # img_permuted = out.permute(1, 2, 0)
 # img_np = img_permuted.detach().cpu().numpy()
@@ -69,8 +72,12 @@ out = LPRnet( resized_img ) # license plate string
 # plt.axis('off')
 # plt.show()
 
-print('output:  ', out)
-print('real plate: ', lp)
+#print('output:  ', output3)
+print('real plate: ', utils.lpDecoder(lp))
+
+
+
+
 
 
 
