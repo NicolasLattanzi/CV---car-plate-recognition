@@ -1,7 +1,7 @@
 import torch
 from torchvision import transforms
 from torchvision.transforms import functional
-import numpy as np
+import torch.nn.functional as f
 
 CHARS = ['京', '沪', '津', '渝', '冀', '晋', '蒙', '辽', '吉', '黑',
          '苏', '浙', '皖', '闽', '赣', '鲁', '豫', '鄂', '湘', '粤',
@@ -68,10 +68,8 @@ def crop_photo(image, vertices):
     return transform(cropped_img)
 
 def tensorToString(output):
-    print(output)
     probs = f.softmax(output, dim=2) #estraggo le probabilita dal tensore che sia un carattere specifico
     pred_indices = probs.argmax(dim=2) #seleziono per ogni indice quella piu probabile
-    #print(pred_indices)
     #pred_indices = pred_indices.cpu().numpy().tolist()  # trasforma in lista di liste di int
     risultati=[]
     #chiamo il CTC decoder per ogni lista di int, ogni lista mi da una stringa, che metto in risultati
@@ -81,6 +79,7 @@ def tensorToString(output):
         
     risultatoUnico=''.join(risultati) #creo una stringa unica dalle varie componenti ottenute nel for.
     return risultatoUnico
+
 
 #def tensorToString(output):
     print(output)
@@ -105,6 +104,7 @@ def tensorToString(output):
             preb_labels.append(no_repeat_blank_label)
     return preb_labels
 
+
 def ctc_greedy_decode(pred_indices, blank=0, char_list=CHARS):
     decoded = []
     prev = None
@@ -115,10 +115,13 @@ def ctc_greedy_decode(pred_indices, blank=0, char_list=CHARS):
     return ''.join(decoded)
 
 def lpDecoder(license,pr_list=provinces, char_list=ads):
+    
     decoded=[]
-    for idx in license:
+    print(license)
+    for idx in license.squeeze():
         if(len(decoded)==0):
             decoded.append(pr_list[idx])
         else:
             decoded.append(char_list[idx])
     return ''.join(decoded)
+    
