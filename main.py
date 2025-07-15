@@ -1,7 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
-import numpy as np
 
 import network
 import data
@@ -41,8 +40,7 @@ for image, _, plate in test_loader:
 img_permuted = img.permute(1, 2, 0)
 img_np = img_permuted.detach().cpu().numpy()
 
-# Visualizza
-import matplotlib.pyplot as plt
+# Visualizza immagine originale
 plt.imshow(img_np)
 plt.axis('off')
 plt.show()
@@ -54,8 +52,7 @@ print(resized_img.shape)
 img_permuted = resized_img.permute(1, 2, 0)
 img_np = img_permuted.detach().cpu().numpy()
 
-# Visualizza
-import matplotlib.pyplot as plt
+# Visualizza targa
 plt.imshow(img_np)
 plt.axis('off')
 plt.show()
@@ -65,6 +62,12 @@ plt.show()
 resized_img = resized_img.float().unsqueeze(0)
 
 out = LPRnet( resized_img ) # license plate string
+
+# img_permuted = out.permute(1, 2, 0)
+# img_np = img_permuted.detach().cpu().numpy()
+# plt.imshow(img_np)
+# plt.axis('off')
+# plt.show()
 
 print('output:  ', out)
 print('real plate: ', lp)

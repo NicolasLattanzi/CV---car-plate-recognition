@@ -1,8 +1,6 @@
-import numpy as np
-import cv2
 import torch
 from torchvision import transforms
-from torchvision.transforms import functional, InterpolationMode
+from torchvision.transforms import functional
 
 
 def vertices_from_image_path(path: str):
