@@ -38,16 +38,20 @@ for image, _, plate in test_loader:
     vertices = resnet(image)
     break
 
+img_permuted = img.permute(1, 2, 0)
+img_np = img_permuted.detach().cpu().numpy()
+
+# Visualizza
+import matplotlib.pyplot as plt
+plt.imshow(img_np)
+plt.axis('off')
+plt.show()
+
 resized_img = utils.crop_photo(img, vertices[0]) # resizing 94x24
-resized_img = resized_img.float().unsqueeze(0)
-
-
 print(resized_img.shape)
-img_single = resized_img.squeeze(0)               # [C,H,W]
-
-img_permuted = img_single.permute(1, 2, 0)        # [H,W,C]
 
 # Converti in numpy
+img_permuted = resized_img.permute(1, 2, 0)
 img_np = img_permuted.detach().cpu().numpy()
 
 # Visualizza
@@ -58,15 +62,12 @@ plt.show()
 
 
 
+resized_img = resized_img.float().unsqueeze(0)
+
 out = LPRnet( resized_img ) # license plate string
 
 print('output:  ', out)
 print('real plate: ', lp)
-
-plt.imshow( img.detach().numpy() )
-plt.title("Immagine originale CCPD")
-plt.axis('off')
-plt.show()
 
 
 

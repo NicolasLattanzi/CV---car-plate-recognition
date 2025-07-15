@@ -22,18 +22,33 @@ def plate_from_image_path(path: str):
 
 
 def crop_photo(image, vertices):
+
     if isinstance(vertices, torch.Tensor):
         vertices = vertices.detach().numpy()
+
+    w = h = 224
+    v1,v2,v3,v4,v5,v6,v7,v8 = vertices
+    vertices = [ v1*w,v2*h,v3*w,v4*h,v5*w,v6*h,v7*w,v8*h ] # denormalization
+    vertices = list(map(int, vertices))
+
+    # bottom-right, bottom-left, top-left, top-right
     pts = [ [vertices[i], vertices[i+1]] for i in range(0, 8, 2) ]
 
-    # order must be:             top-left, top-right, bottom-right, bottom-left
-    # but vertices are in order: bottom-right, bottom-left, top-left, top-right
-    pts = pts[4:] + pts[:4] # swap
-    output_size = (94, 24)
-    dst_pts = [[0, 0], [output_size[0]-1, 0], [output_size[0]-1, output_size[1]-1], [0, output_size[1]-1]]
+    # top-left, top-right, bottom-right, bottom-left
+    pts = pts[2:] + pts[:2] # swap    
 
-    cropped_img = functional.perspective(image, startpoints=pts, endpoints=dst_pts, interpolation=InterpolationMode.BILINEAR)
+    height_padding = int(abs( pts[0][1] - pts[1][1] ))
+    width_padding = int(abs( pts[0][0] - pts[3][0] ))
+    cropped_height = pts[3][1] - pts[0][1] + 2*height_padding
+    cropped_width = pts[1][0] - pts[0][0] + 2*width_padding
 
-    return cropped_img
+    cropped_img = functional.crop( img = image, 
+                            top = pts[0][1] - height_padding, 
+                            left = pts[0][0] - width_padding, 
+                            height = cropped_height, 
+                            width = cropped_width )
+    
+    transform = transforms.Resize((24, 94))
+    return transform(cropped_img)
 
 
