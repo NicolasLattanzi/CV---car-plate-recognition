@@ -105,7 +105,7 @@ def tensorToString(output):
     return preb_labels
 
 
-def ctc_greedy_decode(pred_indices, blank=0, char_list=CHARS):
+def ctc_greedy_decode(pred_indices, blank=len(CHARS)-1, char_list=CHARS):
     decoded = []
     prev = None
     for idx in pred_indices:
