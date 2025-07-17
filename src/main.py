@@ -8,12 +8,12 @@ import cv2
 
 
 # data
-dataset = data.CarPlateDataset("../CCPD2019")
+dataset = data.CarPlateDataset("../../CCPD2019")
 _, test_dataset = data.train_test_split(dataset)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 # detection model 
-resnet = torch.load("models/detection_model.pth", map_location="cpu", weights_only=False)
+resnet = torch.load("../models/detection_model.pth", map_location="cpu", weights_only=False)
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 resnet = resnet.to(device)
 resnet.eval()
@@ -23,7 +23,7 @@ num_classes = 68 # numero di caratteri supportati
 dropout_rate = 0.5
 
 LPRnet = network.build_lprnet(class_num=num_classes, dropout_rate=dropout_rate)
-state_dict=torch.load("models/Final_LPRNet_model.pth", map_location="cpu", weights_only=False)
+state_dict=torch.load("../models/Final_LPRNet_model.pth", map_location="cpu", weights_only=False)
 LPRnet.load_state_dict(state_dict)
 LPRnet.eval()
 
