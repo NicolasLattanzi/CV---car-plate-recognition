@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import network
 import data
 import utils
+from paddleocr import PaddleOCR
+import numpy as np
 import cv2
 
 
@@ -13,19 +15,14 @@ _, test_dataset = data.train_test_split(dataset)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 # detection model 
-resnet = torch.load("../models/detection_model.pth", map_location="cpu", weights_only=False)
+resnet = torch.load("CV---car-plate-recognition-main/models/detection_model.pth", map_location="cpu", weights_only=False)
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 resnet = resnet.to(device)
 resnet.eval()
 
 # recognition model
-num_classes = 68 # numero di caratteri supportati
-dropout_rate = 0.5
 
-LPRnet = network.build_lprnet(class_num=num_classes, dropout_rate=dropout_rate)
-state_dict=torch.load("../models/Final_LPRNet_model.pth", map_location="cpu", weights_only=False)
-LPRnet.load_state_dict(state_dict)
-LPRnet.eval()
+ocr=PaddleOCR(use_angle_cls=True, lang='en')
 
 
 ##### test ######
@@ -46,23 +43,42 @@ plt.axis('off')
 plt.show()
 
 resized_img = utils.crop_photo(img, vertices[0]) # resizing 94x24
-print(resized_img.shape)
-
-# Converti in numpy
-img_permuted = resized_img.permute(1, 2, 0)
-img_np = img_permuted.detach().cpu().numpy()
-
-# Visualizza targa
-plt.imshow(img_np)
+test2=np.transpose(resized_img,(1,2,0))
+plt.imshow(test2)
 plt.axis('off')
 plt.show()
+test=cv2.imread("CV---car-plate-recognition-main/京PL3N67.jpg")
+
+
+
+# Converti in numpy
+#img_permuted = resized_img.permute(1, 2, 0)
+#img_np = resized_img.detach().cpu().numpy()
+
+# Visualizza targa
+#img_np=np.transpose(img_np, (1,2,0))
+#test1=np.transpose(test, (1,2,0))
+plt.imshow(test)
+plt.axis('off')
+plt.show()
+
+if img_np.max()<=1.0:
+    img_np=(img_np*255).astype(np.uint8)
+else:
+    img_np=img_np.astype(np.uint8)
+
+
 
 
 
 resized_img = resized_img.float().unsqueeze(0)
+print(resized_img)
+results=[]
+result=ocr.predict(test)
+for line in result[0]:
+    results.append(line[1][0])
 
-output2 = LPRnet( resized_img ) # license plate string
-output3=utils.tensorToString(output2)
+print(results)
 
 
 
@@ -74,10 +90,6 @@ output3=utils.tensorToString(output2)
 
 #print('output:  ', output3)
 print('real plate: ', utils.lpDecoder(lp))
-
-
-
-
 
 
 
