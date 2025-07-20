@@ -12,7 +12,7 @@ learning_rate = 0.001
 
 ###############################
 
-dataset = data.CarPlateDataset("..\..\CCPD2019")
+dataset = data.CarPlateDataset("..\CCPD2019")
 train_dataset, test_dataset = data.train_test_split(dataset)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
@@ -76,7 +76,7 @@ for epoch in range(num_epochs):
     avg_test_loss = test_loss / test_size
     print(f"Epoch [{epoch+1}/{num_epochs}] test completed. Average Loss: {avg_test_loss:.4f}\n")
 
-torch.save(model, "../models/detection_model.pth")
+torch.save(model, "models/detection_model.pth")
 
 
 
