@@ -8,6 +8,15 @@ from paddleocr import PaddleOCR
 import numpy as np
 import cv2
 
+#############################################################################
+#############################################################################
+#
+# Note: this file was created for the sole purpose of testing th correct
+# operation of the functions and models inside this project. to execute the
+# actual models, please use the train.py and evaluate.py files.
+#
+#############################################################################
+#############################################################################
 
 # data
 dataset = data.CarPlateDataset("../../CCPD2019")

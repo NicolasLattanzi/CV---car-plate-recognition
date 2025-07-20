@@ -20,20 +20,20 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 train_size = len(train_loader)
 test_size = len(test_loader)
 
-modelDet = network.build_resnet()
+model = network.build_resnet()
 # checking if gpu is available, otherwise cpu is used
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-modelDet = modelDet.to(device)
+model = model.to(device)
 
 
 print('//  starting training  //')
 
 loss_function = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(modelDet.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 
 for epoch in range(num_epochs):
-    modelDet.train()
+    model.train()
     train_loss = 0.0
     print(f'###\t\t  starting epoch n.{epoch+1}  \t\t###\n')
     for i, (images, labels, _) in enumerate(train_loader):
@@ -41,7 +41,7 @@ for epoch in range(num_epochs):
         labels = labels.to(device)
 
         # forward step
-        outputs = modelDet(images)
+        outputs = model(images)
         loss = loss_function(outputs, labels)
 
         # backward step
@@ -59,14 +59,14 @@ for epoch in range(num_epochs):
     print(f"Epoch [{epoch+1}/{num_epochs}] training completed. Average Loss: {avg_train_loss:.4f}")
 
 
-    modelDet.eval()
+    model.eval()
     test_loss = 0.0
     with torch.no_grad():
         for i, (images, labels, _) in enumerate(test_loader):
             images = images.to(device)
             labels = labels.to(device)
 
-            outputs = modelDet(images)
+            outputs = model(images)
             loss = loss_function(outputs, labels)
             test_loss += loss.item()
 
@@ -76,7 +76,7 @@ for epoch in range(num_epochs):
     avg_test_loss = test_loss / test_size
     print(f"Epoch [{epoch+1}/{num_epochs}] test completed. Average Loss: {avg_test_loss:.4f}\n")
 
-torch.save(modelDet, "../models/detection_model.pth")
+torch.save(model, "../models/detection_model.pth")
 
 
 

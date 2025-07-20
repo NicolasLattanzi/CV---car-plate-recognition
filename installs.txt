@@ -1,6 +1,10 @@
-preparing the virtual enviroment:
+to run this project, we've prepared a virtual enviroment using anaconda's support.
+the enviroment in question uses python version 3.12.11 and is configured through the
+following set of commands:
+
 
 conda install -c pytorch pytorch torchvision
-pip install imutils
 pip install opencv-python==3.4.18.65
+
++ optional:
 conda install conda-forge::matplotlib
