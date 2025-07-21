@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import *
 from torchvision import transforms
 import data
-import prova
+import network
 import globals
 from tqdm import tqdm
 
