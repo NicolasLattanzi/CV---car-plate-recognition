@@ -11,7 +11,7 @@ The model is composed of two models:
 1. resnet18, deployed as a detection algorithm
 2. LPRnet, used to the recognition part of the task
 
-The counterparts of the these models in the original work are Yolov5 and PDLPRnet. (+ results)
+The counterparts of the these models in the original work are Yolov5 and PDLPRnet, used as metrics to analyze our own model progress.
 
 ### Running the code
 
