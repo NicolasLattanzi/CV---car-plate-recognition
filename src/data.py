@@ -9,7 +9,6 @@ import os
 
 import utils
 
-
 class CarPlateDataset(Dataset):
 
     def __init__(self, path, training=True):
@@ -80,3 +79,28 @@ def create_cropped_dataset():
         # Percorso di output (assicurati che la cartella esista)
         output_path = os.path.join(output_dir, os.path.basename(image))
         cv2.imwrite(output_path, test)
+
+class LicensePlateDataset(Dataset):
+    def __init__(self, img_dir, transform=None):
+        self.img_dir = img_dir
+        self.img_list = [fname for fname in os.listdir(img_dir)if fname.endswith('.jpg') and len(fname.split('_')) == 7]  # sanity check (opzionale)
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.img_list)
+
+    def __getitem__(self, idx):
+        fname=self.img_list[idx]
+        img_path = os.path.join(self.img_dir, fname)
+        image = Image.open(img_path).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+
+        label_str = os.path.splitext(fname)[0]
+        label = [int(x) for x in label_str.split('_')]
+        label_tensor = torch.tensor(label, dtype=torch.long)
+        target_length=len(label_tensor)
+        return image, label_tensor, target_length
+        
+        
+
