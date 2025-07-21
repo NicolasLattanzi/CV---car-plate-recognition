@@ -223,14 +223,14 @@ class Decoder(nn.Module):
 class PDLPR(nn.Module):
     def __init__(self,
                  in_channels=3,
-                 base_channels=512,
-                 encoder_d_model=512,
-                 encoder_nhead=8,
+                 base_channels=256,
+                 encoder_d_model=256,
+                 encoder_nhead=4,
                  encoder_height=16,
                  encoder_width=16,
-                 decoder_num_layers=3,
-                 num_classes=68,
-                 seq_len=8):
+                 decoder_num_layers=2,
+                 num_classes=69,
+                 seq_len=7):
         super().__init__()
         self.igfe = IGFE(in_channels, base_channels)
         self.pool = nn.AdaptiveAvgPool2d((encoder_height, encoder_width))
