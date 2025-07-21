@@ -26,7 +26,7 @@ def main():
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     BLANK_IDX = len(globals.unique_total)
 
-    model = prova.LicensePlateResNet(num_classes=NUM_CLASSES)
+    model = network.LicensePlateResNet(num_classes=NUM_CLASSES)
     model=model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     criterion = nn.CTCLoss(blank=BLANK_IDX, zero_infinity=True)
