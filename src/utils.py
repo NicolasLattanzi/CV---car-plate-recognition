@@ -26,9 +26,7 @@ def crop_photo(image, vertices):
     if isinstance(vertices, torch.Tensor):
         vertices = vertices.detach().numpy()
 
-    w = h = 224
-    v1,v2,v3,v4,v5,v6,v7,v8 = vertices
-    vertices = [ v1*w,v2*h,v3*w,v4*h,v5*w,v6*h,v7*w,v8*h ] # denormalization
+    
     vertices = list(map(int, vertices))
 
     # bottom-right, bottom-left, top-left, top-right
@@ -50,8 +48,33 @@ def crop_photo(image, vertices):
     
     transform = transforms.Resize((24, 94))
     return transform(cropped_img)
+def rename_files(folder_path):
+    """
+    Rinomina tutti i file della cartella specificata mantenendo solo la quinta parte
+    del nome originale, separata da trattini ('-').
+    """
+    seen=set()
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        # Salta se non è un file
+        if not os.path.isfile(file_path):
+            continue
 
-
+        name, ext = os.path.splitext(filename)
+        parts = name.split('-')
+        # Assicurati che il nome ha almeno 5 segmenti
+        if len(parts) > 4:
+            new_name = parts[4] + ext
+            new_path = os.path.join(folder_path, new_name)
+            if new_name in seen or os.path.exists(new_path):
+                os.remove(file_path)
+                print(f'Eliminato duplicato: "{filename}"')
+            else:
+                os.rename(file_path, new_path)
+                seen.add(new_name)
+                print(f'Rinominato: "{filename}" -> "{new_name}"')
+        else:
+            print(f'Saltato: "{filename}" (struttura non valida)')
 def lpDecoder(license,pr_list=provinces, char_list=ads):
     
     decoded=[]
