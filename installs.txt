@@ -4,7 +4,9 @@ following set of commands:
 
 
 conda install -c pytorch pytorch torchvision
+pip install imutils
 pip install opencv-python==3.4.18.65
+pip install tqdm
 
 + optional:
 conda install conda-forge::matplotlib

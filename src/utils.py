@@ -1,6 +1,8 @@
 import torch
 from torchvision import transforms
 from torchvision.transforms import functional
+import os
+
 from globals import provinces, alphabets, ads
 
 
@@ -48,6 +50,8 @@ def crop_photo(image, vertices):
     
     transform = transforms.Resize((24, 94))
     return transform(cropped_img)
+
+
 def rename_files(folder_path):
     """
     Rinomina tutti i file della cartella specificata mantenendo solo la quinta parte
@@ -75,6 +79,8 @@ def rename_files(folder_path):
                 print(f'Rinominato: "{filename}" -> "{new_name}"')
         else:
             print(f'Saltato: "{filename}" (struttura non valida)')
+
+
 def lpDecoder(license,pr_list=provinces, char_list=ads):
     
     decoded=[]

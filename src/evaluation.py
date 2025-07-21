@@ -21,7 +21,7 @@ data_size = len(data_loader)
 
 # detection model
 
-resnet = torch.load("models/modelDetection.pth", map_location="cpu")
+resnet = torch.load("models/latest_resnet.pth", map_location="cpu")
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 resnet = resnet.to(device)
 

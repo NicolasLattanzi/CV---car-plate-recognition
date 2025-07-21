@@ -17,5 +17,6 @@ The counterparts of the these models in the original work are Yolov5 and PDLPRne
 
 The model created in this project is purely educational, but if you want to run it, there are only to main steps to follow:
 - download the CCPD2019 dataset and place it in the same directory as this project.
-- read installs.txt for the needed libraries.\ 
+- read installs.txt for the needed libraries and install them.  
+
 Once prepared the enviroment, you may execute the code in the 'train' and 'evaluate' files to analyze the training and testing of our models.
